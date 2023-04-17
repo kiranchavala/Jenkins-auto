@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 MAINTAINER "Apache CloudStack" <dev@cloudstack.apache.org>
 LABEL Vendor="Apache.org" License="ApacheV2" Version="4.19.0.0"
