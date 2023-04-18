@@ -1,0 +1,52 @@
+def imagetag="latest"
+pipeline{
+    agent none
+    stages{
+        stage('execute shell script')
+    {
+        agent any
+
+        steps{
+            // Execute a shell script to get the latest docker image tag of apache/cloudstack-simulator
+        script{
+            imagetag = sh  (script:  "/var/lib/jenkins/docker.sh apache/cloudstack-simulator | jq -r '.tags[-2]' " , returnStdout: true ).trim()
+         
+            
+        }
+           echo "${imagetag}"
+        
+        }
+            
+        }
+        stage ('Pull the docker image')
+        {
+            agent {
+                docker { 
+                    image  "apache/cloudstack-simulator:${imagetag}"
+                    args   "-u root:root"
+                    
+                }
+                }
+            steps{
+                
+                sh 'python --version'
+                
+                sh 'pwd'
+                sh 'ls -la'
+               
+// pipeline processing
+                sh 'timeout 100s tail -f /var/log/dpkg.log'
+                //sh 'timeout 100s tail -f /var/log/bootstrap.log'
+                //sh 'timeout 100s tail -f /var/log/supervisor/supervisord.log'
+                //sh 'timeout 300s tail -f /root/vmops.log'
+                sh 'python /root/tools/marvin/marvin/deployDataCenter.py -i /root/setup/dev/advanced.cfg'
+
+                sh 'nosetests -v --with-marvin   --marvin-config=setup/dev/advanced.cfg   --with-xunit   --xunit-file=xunit.xml   -a tags=advanced,required_hardware=false   --zone=Sandbox-simulator   --hypervisor=simulator    test/integration/smoke/test_vm_life_cycle.py' 
+               
+            }
+        }
+       
+       
+    }
+        
+    }
