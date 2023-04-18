@@ -9,7 +9,7 @@ pipeline{
         steps{
             // Execute a shell script to get the latest docker image tag of apache/cloudstack-simulator
         script{
-            imagetag = sh  (script:  "/var/lib/jenkins/docker.sh apache/cloudstack-simulator | jq -r '.tags[0]' " , returnStdout: true ).trim()
+            imagetag = sh  (script:  "docker.sh apache/cloudstack-simulator | jq -r '.tags[0]' " , returnStdout: true ).trim()
          
             
         }
