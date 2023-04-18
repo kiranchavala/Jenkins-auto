@@ -65,7 +65,7 @@ pipeline{
     
         stage ('stop and remove the container')
          {
-            aagent {label 'docker-ubuntu'}
+            agent {label 'docker-ubuntu'}
              steps{
                  
                sh 'docker stop simulator'
