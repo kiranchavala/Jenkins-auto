@@ -4,7 +4,7 @@ pipeline{
     stages{
         stage('execute shell script')
     {
-        agent any
+        agent {label 'docker-ubuntu'}
 
         steps{
             // Execute a shell script to get the latest docker image tag of apache/cloudstack-simulator
@@ -21,7 +21,7 @@ pipeline{
         }
         stage ('pull the docker image')
         {
-            agent any
+            agent {label 'docker-ubuntu'}
              steps{
                sh "docker run --name simulator -p 8081:5050 -v /tmp:/tmp -d apache/cloudstack-simulator:$imagetag"
                
@@ -33,7 +33,7 @@ pipeline{
         
        stage ('wait for management server to come up')
        {
-           agent any
+           agent {label 'docker-ubuntu'}
            steps{
             echo 'Waiting 5 minutes for management server to come up'
             sh 'sleep 300' 
@@ -42,7 +42,7 @@ pipeline{
         
        stage ('Deploy the datacenter')
          {
-            agent any
+            agent {label 'docker-ubuntu'}
              steps{
                  
                sh 'docker exec -t simulator python /root/tools/marvin/marvin/deployDataCenter.py -i /root/setup/dev/advanced.cfg'
@@ -52,7 +52,7 @@ pipeline{
         
         stage ('run the smoke tests')
        {
-            agent any
+            agent {label 'docker-ubuntu'}
              steps{
                  
                sh 'docker exec -t simulator  nosetests -v --with-marvin   --marvin-config=setup/dev/advanced.cfg   --with-xunit   --xunit-file=xunit.xml   -a tags=advanced,required_hardware=false   --zone=Sandbox-simulator   --hypervisor=simulator    test/integration/smoke/test_vm_life_cycle.py'
@@ -65,7 +65,7 @@ pipeline{
     
         stage ('stop and remove the container')
          {
-            agent any
+            aagent {label 'docker-ubuntu'}
              steps{
                  
                sh 'docker stop simulator'
