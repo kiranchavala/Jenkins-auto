@@ -4,7 +4,7 @@ pipeline{
     stages{
         stage('execute shell script')
     {
-        agent any
+        agent {label 'docker-ubuntu'}
 
         steps{
             // Execute a shell script to get the latest docker image tag of apache/cloudstack-simulator
@@ -23,6 +23,7 @@ pipeline{
         {
             agent {
                 docker { 
+                    label 'docker-ubuntu'
                     image  "apache/cloudstack-simulator:${imagetag}"
                     args   "-u root:root"
                     
