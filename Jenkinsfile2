@@ -8,6 +8,7 @@ pipeline{
 
         steps{
             // Execute a shell script to get the latest docker image tag of apache/cloudstack-simulator
+            sh 'chmod 777 $WORKSPACE/docker.sh'
         script{
             imagetag = sh  (script:  "$WORKSPACE/docker.sh apache/cloudstack-simulator | jq -r '.tags[-2]' " , returnStdout: true ).trim()
          
